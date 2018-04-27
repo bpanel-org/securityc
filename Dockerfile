@@ -1,6 +1,6 @@
 FROM golang:1.10.1 as builder
 
-ENV GIT_COMMIT 9ce254d3b4c86bb3d0ecf7d27556c7ea21c08894
+ARG GIT_COMMIT=9ce254d3b4c86bb3d0ecf7d27556c7ea21c08894
 
 RUN apt-get update && apt-get install -y git bash openssl curl ca-certificates \
   && go get -d github.com/square/certstrap \
@@ -11,9 +11,9 @@ RUN apt-get update && apt-get install -y git bash openssl curl ca-certificates \
 
 FROM nginx:1.13
 
-LABEL "com.github.repo"="bpanel-org/bpanel"
+LABEL "com.github.repo"="bpanel-org/securityc"
 LABEL "maintainer"="bcoin"
-LABEL "version"="0.0.1"
+LABEL "version"="0.0.2"
 
 COPY --from=builder /usr/local/bin/certstrap /usr/local/bin/
 

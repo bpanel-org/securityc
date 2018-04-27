@@ -19,8 +19,5 @@ echo "starting cert generation"
 
 $DIR/securityc.sh $args
 
-echo "starting nginx"
-# TODO(mark): envsubst nginx config
-
-exec nginx -g 'daemon off;'
+$DIR/nginx.sh
 

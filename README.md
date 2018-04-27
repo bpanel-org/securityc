@@ -20,28 +20,17 @@ for rendering templates with environmental variables.
 Building the container
 
 ```bash
-$ basename $PWD
-> bpanel
-$ docker-compose build securityc
+$ docker build -t securityc:latest
 ```
 
-Generate a CA cert/key pair or provide a CA cert/key pair to create leaf certificate cert/key pairs.
-This is useful if you need TLS termination while you are developing, for example some hardware
+Generate a CA cert/key pair using certstrap or provide a CA cert/key pair to
+create leaf certificate cert/key pairs.
+Optionally bring up `nginx` to use as a reverse proxy which is useful
+if you need TLS termination, for example some hardware
 wallet libraries like [bledger](https://github.com/bcoin-org/bledger) require HTTPS.
-securityc is configured with environmental variables. An arbitrary number of certs can be generated,
-to properly bundle the inputs per cert, the environmental variables must follow the schema:
+securityc is configured with environmental variables. 
 
-```bash
-SECURITYC_{APP_NAME}_{ARG_NAME}
-```
-
-The prefix `SECURITYC` ensures that there are no collisions with other environmental variables.
-The `{APP_NAME}` refers to an application that a cert/private key should be generated for.
-The `{ARG_NAME}` refers to an argument that the script needs to generate the cert/private key pair.
-The script will be invoked once for each `{APP_NAME}` that has all of the appropriate arguments.
-NOTE: valid `{APP_NAME}`s contain `[A-Z]`, please do not include `_` or other characters
-
-The `{ARG_NAME}`s that can be provided are:
+TLS Certificate generation uses these environmental variables:
 
 - `CA_COMMON_NAME` (REQUIRED) - Subject Common Name for the generated CA
 - `CERT_COMMON_NAME` (REQUIRED) - Subject Common Name for the leaf Certificate
@@ -54,28 +43,38 @@ The `{ARG_NAME}`s that can be provided are:
 - `KEY_OUT` (REQUIRED) - Output file for leaf TLS key
 - `CERT_OUT` (REQUIRED) - Output file for leaf TLS cert
 
-An example where the `{APP_NAME}` is set to `SERVER` looks like this:
+`nginx` reverse proxy configuration uses these environmental variables:
+
+- `USE_NGINX` - Start the nginx reverse proxy
+- `NGINX_SSL_CERTIFICATE` - Path to file with certificate in PEM format [docs](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate)
+- `NGINX_SSL_CERTIFICATE_KEY` - Path to secret key in PEM format [docs](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate_key)
+- `NGINX_UPSTREAM_URI` - URI for upstream application
 
 ```bash
 # common names
-export SECURITYC_SERVER_CA_COMMON_NAME=bpanel
-export SECURITYC_SERVER_CERT_COMMON_NAME=localhost
+export CA_COMMON_NAME=bpanel
+export CERT_COMMON_NAME=localhost
 
 # x509v3 SAN fields - at least one must be provided
-export SECURITYC_SERVER_CERT_IP=127.0.0.1
-export SECURITYC_SERVER_CERT_DOMAIN=localhost
+export CERT_IP=127.0.0.1
+export CERT_DOMAIN=localhost
 
 # path to generated CA cert/key
-export SECURITYC_SERVER_CA_OUT=/etc/ssl/certs/ca.crt
-export SECURITYC_SERVER_CA_KEY_OUT=/etc/ssl/certs/ca.key
+export CA_OUT=/etc/ssl/certs/ca.crt
+export CA_KEY_OUT=/etc/ssl/certs/ca.key
 
 # path to provided CA cert/key
-export SECURITYC_SERVER_CA_IN=/etc/ssl/certs/ca.crt
-export SECURITYC_SERVER_CA_KEY_IN=/etc/ssl/certs/ca.key
+export CA_IN=/etc/ssl/certs/ca.crt
+export CA_KEY_IN=/etc/ssl/certs/ca.key
 
 # path to generated leaf cert/key
-export SECURITYC_SERVER_KEY_OUT=/etc/nginx/tls.key
-export SECURITYC_SERVER_CERT_OUT=/etc/nginx/tls.crt
+export CERT_OUT=/etc/nginx/tls.crt
+export KEY_OUT=/etc/nginx/tls.key
+
+# use the generated cert/key
+export NGINX_SSL_CERTIFICATE=/etc/nginx/tls.crt
+export NGINX_SSL_CERTIFICATE_KEY=/etc/nginx/tls.key
+export NGINX_UPSTREAM_URI=app:5000
 ```
 
 ## Use Cases
@@ -159,5 +158,5 @@ respectively.
 
 ## TODO Features
 
-- `envsubst` auto generation of `nginx.conf`
+- Use events from the docker sock to know when to generate certs
 
