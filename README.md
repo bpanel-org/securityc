@@ -134,7 +134,8 @@ $ docker run --rm -e CA_COMMON_NAME=bpanel \
   -e KEY_OUT=/etc/nginx/tls.key \
   -e NGINX_SSL_CERTIFICATE=/etc/nginx/tls.crt \
   -e NGINX_SSL_CERTIFICATE_KEY=/etc/nginx/tls.key \
-  -e NGINX_UPSTREAM_URI=app:5000
+  -e NGINX_UPSTREAM_URI=app:5000 \
+  bpanel/securityc:latest
 ```
 
 ## Use Cases
