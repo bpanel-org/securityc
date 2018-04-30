@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y git bash openssl curl ca-certificates \
 FROM nginx:1.13
 
 LABEL "com.github.repo"="bpanel-org/securityc"
-LABEL "maintainer"="bcoin"
+LABEL "maintainer"="bpanel"
 LABEL "version"="0.0.2"
 
 COPY --from=builder /usr/local/bin/certstrap /usr/local/bin/
