@@ -13,7 +13,7 @@ $ brew link --force gettext
 ```
 
 The `gettext` package includes `envsubst`, which is a handy program
-for rendering templates with environmental variables.
+for rendering templates with environment variables.
 
 # Usage
 
@@ -28,9 +28,9 @@ create leaf certificate cert/key pairs.
 Optionally bring up `nginx` to use as a reverse proxy which is useful
 if you need TLS termination, for example some hardware
 wallet libraries like [bledger](https://github.com/bcoin-org/bledger) require HTTPS.
-securityc is configured with environmental variables. 
+securityc is configured with environment variables.
 
-TLS Certificate generation uses these environmental variables:
+TLS Certificate generation uses these environment variables:
 
 - `CA_COMMON_NAME` (REQUIRED) - Subject Common Name for the generated CA
 - `CERT_COMMON_NAME` (REQUIRED) - Subject Common Name for the leaf Certificate
@@ -43,9 +43,9 @@ TLS Certificate generation uses these environmental variables:
 - `KEY_OUT` (REQUIRED) - Output file for leaf TLS key
 - `CERT_OUT` (REQUIRED) - Output file for leaf TLS cert
 
-`nginx` reverse proxy configuration uses these environmental variables:
+`nginx` reverse proxy configuration uses these environment variables:
 
-- `USE_NGINX` - Start the nginx reverse proxy
+- `USE_NGINX` - Start the nginx reverse proxy if set
 - `NGINX_SSL_CERTIFICATE` - Path to file with certificate in PEM format [docs](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate)
 - `NGINX_SSL_CERTIFICATE_KEY` - Path to secret key in PEM format [docs](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate_key)
 - `NGINX_UPSTREAM_URI` - URI for upstream application
@@ -118,7 +118,7 @@ Signature Algorithm: sha256WithRSAEncryption
             CA:TRUE, pathlen:0
 ```
 
-The value of `SECURITYC_SERVER_CA_COMMON_NAME`
+The value of `CA_COMMON_NAME`
 is set as the `Subject CN` and you can see that the certificate is a CA that
 can do certificate signing.
 
@@ -151,12 +151,12 @@ Signature Algorithm: sha256WithRSAEncryption
         DNS:localhost, IP Address:127.0.0.1
 ```
 
-The value of `SECURITYC_SERVER_CERT_COMMON_NAME` sets the `Subject CN`, 
-`SECURITYC_SERVER_CERT_IP` and `SECURITYC_SERVER_CERT_DOMAIN` set the values
+The value of `CERT_COMMON_NAME` sets the `Subject CN`,
+`CERT_IP` and `CERT_DOMAIN` set the values
 of the `X509v3 Subject Alternative Name` `IP Address` and `DNS` fields
 respectively.
 
 ## TODO Features
 
-- Use events from the docker sock to know when to generate certs
+- Use events from the docker sock to generate certs on the fly
 
